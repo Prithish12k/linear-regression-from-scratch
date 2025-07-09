@@ -37,3 +37,7 @@ class Matrix {
         double determinant() const;
         Matrix inverse() const;
 };
+
+double dot(const std::vector<double>& v1, const std::vector<double>& v2);
+
+double norm(const std::vector<double>& v);

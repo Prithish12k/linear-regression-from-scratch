@@ -19,7 +19,7 @@ std::vector<double> LinearRegression::predict(const std::vector<std::vector<doub
         pred.push_back(val);
     }
 
-    return preds;
+    return pred;
 }
 
 const std::vector<double>& LinearRegression::coefficients() const {

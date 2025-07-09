@@ -11,4 +11,4 @@ public:
 private:
 
     std::vector<double> beta_;
-}
+};

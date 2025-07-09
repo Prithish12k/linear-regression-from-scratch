@@ -1,7 +1,18 @@
 #include "Matrix.hpp"
 
 Matrix::Matrix(const size_t row, const size_t col) : rows(row), cols(col), A(row, std::vector<double>(col, 0.0)) {}
-Matrix::Matrix(const std::vector<std::vector<double>>& input) : rows(input.size()), cols(input[0].size()), A(input) {}
+Matrix::Matrix(const std::vector<std::vector<double>>& input)
+    : rows(input.size()),
+      cols(input.empty() ? 0 : input[0].size()),
+      A(input)
+{
+    // You may want to verify all rows are the same length
+    for (size_t i = 0; i < rows; ++i) {
+        if (input[i].size() != cols) {
+            throw std::invalid_argument("Matrix constructor: inconsistent row sizes.");
+        }
+    }
+}
 
 double& Matrix::operator()(size_t row, size_t col) {
     return A[row][col];
@@ -159,7 +170,7 @@ std::vector<double> Matrix::back_sub(const std::vector<double>& b) const {
 
     if (n != nRows())
     {
-        throw std::invalid_argument("invalid, length of input and output dont match.");
+        throw std::invalid_argument("invalid: length of input and output dont match.");
     }
 
     std::vector<double> x(n);
@@ -167,7 +178,7 @@ std::vector<double> Matrix::back_sub(const std::vector<double>& b) const {
 
     for (int i = n-2; i >= 0; i--)
     {
-        if (std::abs(A[i][i]) < 1e-12) {
+        if (std::fabs(A[i][i]) < 1e-12) {
             throw std::runtime_error("Zero pivot encountered in back substitution.");
         }
 
@@ -197,7 +208,7 @@ std::vector<double> Matrix::for_sub(const std::vector<double>& b) const {
 
     for (size_t i {1}; i < n; i++)
     {
-        if (std::abs(A[i][i]) < 1e-12) {
+        if (std::fabs(A[i][i]) < 1e-12) {
             throw std::runtime_error("Zero pivot encountered in forward substitution.");
         }
 
@@ -212,10 +223,6 @@ std::vector<double> Matrix::for_sub(const std::vector<double>& b) const {
     }
 
     return x;
-}
-
-std::vector<double> Matrix::solveQR(const std::vector<double>& b) const {
-
 }
 
 std::vector<double> Matrix::solveLU(const std::vector<double>& b) const {
@@ -248,7 +255,11 @@ std::vector<double> Matrix::solveLU(const std::vector<double>& b) const {
         {
             XT_X.swapRows(i, mInd);
             std::swap(b_cpy[i], b_cpy[mInd]);
-            L.swapRows(i, mInd);
+            
+            for (size_t k {}; k < i; k++)
+            {
+                std::swap(L(i, k), L(mInd, k));
+            }
         }
 
         if (fabs(XT_X(i, i)) < 1e-12)
@@ -269,5 +280,28 @@ std::vector<double> Matrix::solveLU(const std::vector<double>& b) const {
 
     std::vector<double> y = L.for_sub(b_cpy);
     return XT_X.back_sub(y);
+}
+
+double dot(const std::vector<double>& v1, const std::vector<double>& v2) {
+    if (v1.size() != v2.size())
+    {
+        throw std::invalid_argument("Invalid: length of vectors is different.");
+    }
+
+    const size_t n = v1.size();
+
+    double res {0.0};
+
+    for (size_t i {}; i < n; i++)
+    {
+        res += v1[i]*v2[i];
+    }
+
+    return res;
+}
+
+double norm(const std::vector<double>& v)
+{
+    return std::sqrt(dot(v, v));
 }
 
