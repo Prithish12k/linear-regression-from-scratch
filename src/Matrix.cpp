@@ -251,7 +251,7 @@ std::vector<double> Matrix::solveQR(const std::vector<double>& b) const {
     const size_t m = nCols();
 
     Matrix Q(n, m);
-    Matrix R(n, n);
+    Matrix R(m, m);
 
     for (size_t j {}; j < m; j++)
     {
@@ -265,9 +265,18 @@ std::vector<double> Matrix::solveQR(const std::vector<double>& b) const {
             aj = aj-(qi*inner);
         }
 
-        aj = aj*(1/norm(aj));
+        double norm_aj = norm(aj);
+        R(j, j) = norm_aj;
+
+        aj = aj*(1.0/norm_aj);
         Q.setColumn(aj, j);
     }
+
+    Matrix QT = Q.T();
+
+    std::vector<double> QT_y = QT*b;
+
+    return R.back_sub(QT_y);
 }
 
 void Matrix::setColumn(std::vector<double>& b, size_t k) {
