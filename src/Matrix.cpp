@@ -6,7 +6,6 @@ Matrix::Matrix(const std::vector<std::vector<double>>& input)
       cols(input.empty() ? 0 : input[0].size()),
       A(input)
 {
-    // You may want to verify all rows are the same length
     for (size_t i = 0; i < rows; ++i) {
         if (input[i].size() != cols) {
             throw std::invalid_argument("Matrix constructor: inconsistent row sizes.");
