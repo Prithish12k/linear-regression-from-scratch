@@ -1,0 +1,15 @@
+# Ignore build directories
+/build
+/bin
+/obj
+
+# Ignore OS files
+.DS_Store
+
+# Ignore editor files
+*.swp
+
+# Ignore compiled objects
+*.o
+*.out
+*.exe
