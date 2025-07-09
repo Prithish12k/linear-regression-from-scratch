@@ -156,7 +156,7 @@ Matrix Matrix::operator-(const Matrix& other) const {
 }
 
 std::vector<double> Matrix::getColumn(size_t k) const {
-    if (k < 0 || k >= nCols())
+    if (k >= nCols())
     {
         throw std::invalid_argument("Index out of bounds!");
     }
@@ -189,6 +189,10 @@ std::vector<double> Matrix::back_sub(const std::vector<double>& b) const {
         throw std::invalid_argument("invalid: length of input and output dont match.");
     }
 
+    if (std::fabs(A[n-1][n-1]) < 1e-12) {
+            throw std::runtime_error("Zero pivot encountered in back substitution.");
+    }
+
     std::vector<double> x(n);
     x[n-1] = b[n-1]/A[n-1][n-1];
 
@@ -217,6 +221,10 @@ std::vector<double> Matrix::for_sub(const std::vector<double>& b) const {
     if (n != nRows())
     {
         throw std::invalid_argument("invalid, length of input and output dont match.");
+    }
+
+    if (std::fabs(A[0][0]) < 1e-12) {
+            throw std::runtime_error("Zero pivot encountered in forward substitution.");
     }
 
     std::vector<double> x(n);
@@ -280,7 +288,7 @@ std::vector<double> Matrix::solveQR(const std::vector<double>& b) const {
 }
 
 void Matrix::setColumn(std::vector<double>& b, size_t k) {
-    if (k < 0 || k >= nCols())
+    if (k >= nCols())
     {
         throw std::invalid_argument("invalid index.");
     }
