@@ -155,6 +155,23 @@ Matrix Matrix::operator-(const Matrix& other) const {
     return m;
 }
 
+std::vector<double> Matrix::getColumn(size_t k) const {
+    if (k < 0 || k >= nCols())
+    {
+        throw std::invalid_argument("Index out of bounds!");
+    }
+
+    const size_t n = nRows();    
+    std::vector<double> v(n);
+
+    for (size_t i {}; i < n; i++)
+    {
+        v[i] = A[i][k];
+    }
+
+    return v;
+}
+
 void Matrix::swapRows(size_t i, size_t j) {
         
     if (i >= nRows() || j >= nRows()) {
@@ -224,6 +241,54 @@ std::vector<double> Matrix::for_sub(const std::vector<double>& b) const {
     return x;
 }
 
+std::vector<double> Matrix::solveQR(const std::vector<double>& b) const {
+    if (b.size() != nRows())
+    {
+        throw std::invalid_argument("#rows(A) != length(b).");
+    }
+    
+    const size_t n = b.size();
+    const size_t m = nCols();
+
+    Matrix Q(n, m);
+    Matrix R(n, n);
+
+    for (size_t j {}; j < m; j++)
+    {
+        std::vector<double> aj = getColumn(j);
+
+        for (size_t i {}; i < j; i++)
+        {
+            std::vector<double> qi = Q.getColumn(i);
+            double inner = dot(aj, qi);
+            R(i, j) = inner;
+            aj = aj-(qi*inner);
+        }
+
+        aj = aj*(1/norm(aj));
+        Q.setColumn(aj, j);
+    }
+}
+
+void Matrix::setColumn(std::vector<double>& b, size_t k) {
+    if (k < 0 || k >= nCols())
+    {
+        throw std::invalid_argument("invalid index.");
+    }
+
+    if (b.size() != nRows())
+    {
+        throw std::invalid_argument("different row size.");
+    }
+
+    const size_t n = b.size();
+
+    for (size_t i {}; i < n; i++)
+    {
+        A[i][k] = b[i];
+    }
+}
+
 std::vector<double> Matrix::solveLU(const std::vector<double>& b) const {
     
     const size_t n = nCols();
@@ -279,6 +344,55 @@ std::vector<double> Matrix::solveLU(const std::vector<double>& b) const {
 
     std::vector<double> y = L.for_sub(b_cpy);
     return XT_X.back_sub(y);
+}
+
+std::vector<double> operator+(const std::vector<double>& v1, const std::vector<double>& v2) {
+    if (v1.size() != v2.size())
+    {
+        throw std::invalid_argument("different size");
+    }
+
+    const size_t n = v1.size();
+
+    std::vector<double> res(n);
+
+    for (size_t i {}; i < n; i++)
+    {
+        res[i] = v1[i] + v2[i];
+    }
+
+    return res;
+}
+
+std::vector<double> operator-(const std::vector<double>& v1, const std::vector<double>& v2) {
+    if (v1.size() != v2.size())
+    {
+        throw std::invalid_argument("different size");
+    }
+
+    const size_t n = v1.size();
+
+    std::vector<double> res(n);
+
+    for (size_t i {}; i < n; i++)
+    {
+        res[i] = v1[i] - v2[i];
+    }
+
+    return res;
+}
+
+std::vector<double> operator*(const std::vector<double>& v1, double d) {
+    const size_t n = v1.size();
+
+    std::vector<double> res(n);
+
+    for (size_t i {}; i < n; i++)
+    {
+        res[i] = d*v1[i];
+    }
+
+    return res;
 }
 
 double dot(const std::vector<double>& v1, const std::vector<double>& v2) {

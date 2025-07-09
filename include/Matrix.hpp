@@ -20,6 +20,9 @@ class Matrix {
         size_t nRows() const {return rows;}
         size_t nCols() const {return cols;}
 
+        std::vector<double> getColumn(size_t c) const;
+        void setColumn(std::vector<double>& b, size_t k);
+
         Matrix T() const;
         Matrix operator*(const Matrix& other) const;
         std::vector<double> operator*(const std::vector<double>& b) const;
@@ -38,6 +41,9 @@ class Matrix {
         Matrix inverse() const;
 };
 
+std::vector<double> operator+(const std::vector<double>& v1, const std::vector<double>& v2);
+std::vector<double> operator-(const std::vector<double>& v1, const std::vector<double>& v2);
+std::vector<double> operator*(const std::vector<double>& v1, double d);
 double dot(const std::vector<double>& v1, const std::vector<double>& v2);
 
 double norm(const std::vector<double>& v);
