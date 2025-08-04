@@ -115,6 +115,7 @@ CSVReader
 |---|---|
 | readMatrixWithTarget(file, target) | Reads a CSV, separates features and target, adds a bias term to features, and returns {X, y}. |
 | readMatrix(file, hasHeader) | Reads an entire CSV into a single matrix without separating a target. |
+
 LinearRegression
 | Method | Description |
 |---|---|
@@ -139,3 +140,4 @@ LinearRegression
     ├── LinearRegression.cpp
     └── Matrix.cpp
 ```
+
